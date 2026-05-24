@@ -18,25 +18,36 @@ extension type RequestArguments._(JSObject _) implements JSObject {
 }
 
 // ブラウザ環境からプロバイダを取得
-EthereumProvider? get _provider {
-  // Unifi Walletが注入するオブジェクト（window.kaia または window.ethereum）
+// 戻り値の型を (EthereumProvider, String) のペアにする
+(EthereumProvider, String)? get _providerWithDetails {
   final windowJS = web.window as JSObject;
+
+  // 1. まず 'kaia' をチェック
   if (windowJS.hasProperty('kaia'.toJS).toDart) {
-    return windowJS.getProperty<EthereumProvider>('kaia'.toJS);
-  } else if (windowJS.hasProperty('ethereum'.toJS).toDart) {
-    return windowJS.getProperty<EthereumProvider>('ethereum'.toJS);
+    final provider = windowJS.getProperty<EthereumProvider>('kaia'.toJS);
+    return (provider, 'window.kaia');
   }
+  // 2. 次に 'ethereum' をチェック
+  else if (windowJS.hasProperty('ethereum'.toJS).toDart) {
+    final provider = windowJS.getProperty<EthereumProvider>('ethereum'.toJS);
+    return (provider, 'window.ethereum');
+  }
+
   return null;
 }
 
 // 1. ウォレット接続（アカウント要求）
 Future<String> connectWallet_KAIA() async {
-  final p = _provider;
-  if (p == null) {
-    print("ウォレットプロバイダが見つかりません（LINE/Unifi環境外の可能性）");
+  // レコードで（プロバイダ, 名前）を受け取る
+  final details = _providerWithDetails;
+
+  if (details == null) {
+    print("❌ ウォレットプロバイダが見つかりません。");
     return "";
   }
-  print(p);
+
+  final (p, providerName) = details; // 分割代入
+  print(providerName);
   try {
     // Kaiaチェーンの規格に合わせて kaia_requestAccounts を要求
     final args = RequestArguments(method: 'kaia_requestAccounts'.toJS);
@@ -53,8 +64,13 @@ Future<String> connectWallet_KAIA() async {
 
 // 2. ステーブルコイン等の送金（簡易トランザクション）
 Future<String?> sendTransaction(Map<String, dynamic> tx) async {
-  final p = _provider;
-  if (p == null) return null;
+  // レコードで（プロバイダ, 名前）を受け取る
+  final details = _providerWithDetails;
+  if (details == null) {
+    print("❌ ウォレットプロバイダが見つかりません。");
+    return "";
+  }
+  final (p, providerName) = details; // 分割代入
   final jsTx = tx.jsify()!;
   try {
     final param = JSArray<JSAny>()..add(jsTx);
