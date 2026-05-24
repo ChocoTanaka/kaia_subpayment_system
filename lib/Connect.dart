@@ -36,6 +36,7 @@ Future<String> connectWallet_KAIA() async {
     print("ウォレットプロバイダが見つかりません（LINE/Unifi環境外の可能性）");
     return "";
   }
+  print(p);
   try {
     // Kaiaチェーンの規格に合わせて kaia_requestAccounts を要求
     final args = RequestArguments(method: 'kaia_requestAccounts'.toJS);
