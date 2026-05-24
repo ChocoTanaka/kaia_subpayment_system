@@ -48,17 +48,25 @@ Future<String> connectWallet_KAIA() async {
 
   final (p, providerName) = details; // 分割代入
   print(providerName);
+  // まずはUnifi公式ドキュメント推奨の 'kaia_requestAccounts' を試す
   try {
-    // Kaiaチェーンの規格に合わせて kaia_requestAccounts を要求
     final args = RequestArguments(method: 'kaia_requestAccounts'.toJS);
-    final JSAny response = await p.request(args).toDart;
-
-    // 返り値はアドレスの配列（JSArray）
-    final JSArray<JSString> addresses = response as JSArray<JSString>;
+    final response = await p.request(args).toDart;
+    final addresses = response as JSArray<JSString>;
     return addresses.toDart.first.toDart;
   } catch (e) {
-    print("接続エラー: ${e.toString()}");
-    return "";
+    print("ℹ️ kaia_requestAccounts が失敗しました。eth_requestAccounts を試します。");
+
+    // 失敗したら、通常の標準Ethereumメソッドでフォールバック
+    try {
+      final args = RequestArguments(method: 'eth_requestAccounts'.toJS);
+      final response = await p.request(args).toDart;
+      final addresses = response as JSArray<JSString>;
+      return addresses.toDart.first.toDart;
+    } catch (e2) {
+      print("❌ ウォレット接続に完全に失敗しました: $e2");
+      return "";
+    }
   }
 }
 
