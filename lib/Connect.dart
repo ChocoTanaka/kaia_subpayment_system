@@ -45,7 +45,7 @@ Future<String> connectWallet_KAIA() async {
     final JSArray<JSString> addresses = response as JSArray<JSString>;
     return addresses.toDart.first.toDart;
   } catch (e) {
-    print("接続エラー: $e");
+    print("接続エラー: ${e.toString()}");
     return "";
   }
 }
@@ -62,7 +62,7 @@ Future<String?> sendTransaction(Map<String, dynamic> tx) async {
     final JSAny txHash = await p.request(args).toDart;
     return (txHash as JSString).toDart;
   } catch (e) {
-    print("送金エラー: $e");
+    print("送金エラー: ${e.toString()}");
     return null;
   }
 }

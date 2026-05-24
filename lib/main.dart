@@ -115,6 +115,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
                 isExtended: true,
                 onPressed: () async{
                   userAddress = await connectWallet_KAIA(); // これだけで MetaMask が起動し、userAddress に値が入る
+                  addressNotifier.value = userAddress;
                   //await connectWeb3();
                   print('Connected Address: ${userAddress}');
                 },
