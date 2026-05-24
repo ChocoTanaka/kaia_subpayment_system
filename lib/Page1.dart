@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:js_interop';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'Connect.dart';
 import 'Web3.dart';
 
 @JS('sendTransactionJS')
@@ -129,7 +130,8 @@ class _MPSsState_Read extends State<Page1> {
                   amount: tx_R.amount,
               );
               // WebならJS Interop経由
-              await requestSignatureJS(tx);
+              await sendTransaction(tx);
+              //await requestSignatureJS(tx);
               Navigator.pop(context);
 
             },
@@ -234,8 +236,8 @@ class _MPSsState_Read extends State<Page1> {
         );
       case 1:
         return SizedBox(
-          height:500,
-          width:500,
+          height:300,
+          width:300,
           child: MobileScanner(
             controller: _controller, // ここで指定
             onDetect: (capture) async {

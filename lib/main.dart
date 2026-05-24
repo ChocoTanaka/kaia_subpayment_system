@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaia_subpayment_system/Connect.dart';
 import 'Page1.dart';
 import 'Page2.dart';
 import 'Web3.dart';
@@ -113,7 +114,8 @@ class MPSs_Home extends State<MPSs_Stateful>{
               return FloatingActionButton(
                 isExtended: true,
                 onPressed: () async{
-                  await connectWeb3(); // これだけで MetaMask が起動し、userAddress に値が入る
+                  userAddress = await connectWallet_KAIA(); // これだけで MetaMask が起動し、userAddress に値が入る
+                  //await connectWeb3();
                   print('Connected Address: ${userAddress}');
                 },
                 child: const Icon(Icons.cable),
