@@ -12,7 +12,7 @@ final ValueNotifier<String?> addressNotifier =
 ValueNotifier(null);
 
 enum stablecoin{
-  JPYC('JPYC','0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29',18),
+  JPYC('JPYC','0xe7c3d8c9a439fede00d2600032d5db0be71c3c29',18),
   IDRP('IDRP','0xc16d986585407a74ab87d17c3d0dc19822e3eb35',6);
 
   final String Name;

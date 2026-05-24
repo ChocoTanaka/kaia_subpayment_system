@@ -36,6 +36,7 @@ class _MPSsState_Write extends State<Page2> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        const SizedBox(height: 40),
         Row(
           children: [
             Text(
@@ -50,7 +51,7 @@ class _MPSsState_Write extends State<Page2> {
             )
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 40),
         Row(
           children: [
             Expanded(
@@ -79,13 +80,16 @@ class _MPSsState_Write extends State<Page2> {
                 );
               }).toList(),
               onChanged: (value) {
-                value?.Changecoin();
-                print(now_coin.Name);
+                setState(() {
+                  value?.Changecoin();
+                  print(now_coin.Name);
+                });
+
               },
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 40),
         Container(
           width: 300,
           height: 300,
