@@ -1,0 +1,10 @@
+export declare const METRIC_ACTION_VISIT = "VISIT";
+export declare const METRIC_ACTION_SDK_INIT = "SDK_INIT";
+export declare const METRIC_ACTION_CONNECT = "CONNECT";
+export declare const WALLET_CONNECT_WALLET_NAME_BITGET = "bitget";
+export declare const CHAIN_ID_TESTNET = "1001";
+export declare const CHAIN_ID_MAINNET = "8217";
+export declare const METHOD_NAME_CONNECT_AND_SIGN = "kaia_connectAndSign";
+export declare const MINIDAPP_CONNECT_QUERY_PARAM_REOWN_VERIFIED = "reownVerified";
+export declare const MINIDAPP_CONNECT_QUERY_PARAM_BITGET_EXTENSION_INSTALLED = "bitgetExtensionInstalled";
+export declare const MINIDAPP_CONNECT_QUERY_PARAM_EVENT_TYPE = "eventType";

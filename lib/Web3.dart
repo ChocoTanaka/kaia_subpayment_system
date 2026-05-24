@@ -162,9 +162,6 @@ Map<String, dynamic> buildTransaction({
     "value": "0x0",
     "chainId": "0x${now_chain.Id.toRadixString(16)}",
     'gas': '0x493E0', // 1,000,000（送金のみならこれくらい）
-    // 'gasPrice' ではなく、こちらを指定すると計算が早まる場合があります
-    'maxFeePerGas': '0x746A528800', // 500 Gwei (環境に合わせて調整)
-    'maxPriorityFeePerGas': '0x746A528800', // 500 Gwei
   };
 }
 
