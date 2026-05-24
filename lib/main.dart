@@ -5,8 +5,8 @@ import 'Web3.dart';
 import 'dart:js_interop' as js;
 
 // JSの関数を定義
-@js.JS('connectMetaMask')
-external js.JSPromise<js.JSString?> _connectMetaMask();
+@js.JS('connectWallet')
+external js.JSPromise<js.JSString?> _connectWallet();
 
 void main() {
   runApp(const MPSs());
@@ -65,7 +65,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
   Future<void> connectWeb3() async {
     try {
       // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
-      final js.JSString? result = await _connectMetaMask().toDart;
+      final js.JSString? result = await _connectWallet().toDart;
 
       if (result != null) {
         final String address = result.toDart;

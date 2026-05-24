@@ -78168,7 +78168,7 @@ wC(){var s=0,r=A.O(t.H),q=1,p=[],o,n,m,l,k
 var $async$wC=A.P(function(a,b){if(a===1){p.push(b)
 s=q}while(true)switch(s){case 0:q=3
 s=6
-return A.R(A.fu(v.G.connectMetaMask(),t.ob),$async$wC)
+return A.R(A.fu(v.G.connectWallet(),t.ob),$async$wC)
 case 6:o=b
 if(o!=null){n=o
 if(J.d(n,"NOT_INSTALLED"))A.F5("MetaMask\u304c\u898b\u3064\u304b\u308a\u307e\u305b\u3093")

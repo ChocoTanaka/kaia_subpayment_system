@@ -23,15 +23,15 @@
 <body>
   <script src="flutter_bootstrap.js" async></script>
  <script>
-   async function connectMetaMask() {
-      if (window.kaia) {
+   async function connectWallet() {
+      if (window.ethereum) {
         // すでに接続済みかチェック（これを入れると安定します）
-        if (window.kaia.selectedAddress) {
-          console.log("Already connected:", window.kaia.selectedAddress);
-          return window.kaia.selectedAddress;
+        if (window.ethereum.selectedAddress) {
+          console.log("Already connected:", window.ethereum.selectedAddress);
+          return window.ethereum.selectedAddress;
         }
 
-        const accounts = await window.kaia.request({
+        const accounts = await window.ethereum.request({
           method: 'kaia_accounts'
         });
 
@@ -47,14 +47,14 @@
     }
 
     async function sendTransactionJS(tx) {
-      if (typeof window.kaia === 'undefined') return null;
+      if (typeof window.ethereum === 'undefined') return null;
       try {
     // Reownのrequestとほぼ同じ構造で叩けます
         const finalTx = {
           ...tx,
           gas: "0x493E0", // 300,000 (0xa9059cbb + Tagならこれで十分)
         };
-        const txHash = await window.kaia.request({
+        const txHash = await window.ethereum.request({
           method: 'kaia_sendTransaction',
           params: [finalTx], // txはDart側で作ったMapがそのままJSオブジェクトとして渡ります
         });
