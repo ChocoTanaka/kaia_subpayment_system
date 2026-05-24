@@ -20,7 +20,7 @@ class MPSs extends StatelessWidget {
     return MaterialApp(
       title: 'KAIA Stablecoin Sub-Payment System',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white38),
       ),
       home: const MPSs_Stateful(title: 'KAIA Payment Sub-system'),
     );

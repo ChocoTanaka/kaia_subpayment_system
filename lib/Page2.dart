@@ -76,7 +76,12 @@ class _MPSsState_Write extends State<Page2> {
               items: stablecoin.values.map((stablecoin coin){
                 return DropdownMenuItem(
                   value: coin,
-                  child: Text(coin.Name), // enumに定義したラベルを表示
+                  child: Text(
+                      coin.Name,
+                      style: TextStyle(
+                        fontSize: 22,
+                      )
+                  ), // enumに定義したラベルを表示
                 );
               }).toList(),
               onChanged: (value) {
