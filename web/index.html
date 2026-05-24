@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="This is a kaia_subpayment_system subapp">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="kaia_subpayment_system">
+  <link rel="apple-touch-icon" href="icons/unifi_Stable_192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>kaia_subpayment_system</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+ <script>
+   async function connectMetaMask() {
+      if (window.kaia) {
+        // すでに接続済みかチェック（これを入れると安定します）
+        if (window.kaia.selectedAddress) {
+          console.log("Already connected:", window.kaia.selectedAddress);
+          return window.kaia.selectedAddress;
+        }
+
+        const accounts = await window.kaia.request({
+          method: 'kaia_accounts'
+        });
+
+        if (accounts && accounts.length > 0) {
+          console.log("New connection:", accounts[0]);
+          return accounts[0];
+        }
+        return null;
+      } else {
+        alert("Wallet not Selected");
+        return null;
+      }
+    }
+
+    async function sendTransactionJS(tx) {
+      if (typeof window.kaia === 'undefined') return null;
+      try {
+    // Reownのrequestとほぼ同じ構造で叩けます
+        const finalTx = {
+          ...tx,
+          gas: "0x493E0", // 300,000 (0xa9059cbb + Tagならこれで十分)
+        };
+        const txHash = await window.kaia.request({
+          method: 'kaia_sendTransaction',
+          params: [finalTx], // txはDart側で作ったMapがそのままJSオブジェクトとして渡ります
+        });
+        return txHash;
+      } catch (error) {
+        console.error("Transaction Error:", error);
+        return null;
+      }
+    }
+ </script>
+</body>
+</html>
