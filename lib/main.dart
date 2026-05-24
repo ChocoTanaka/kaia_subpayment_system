@@ -67,10 +67,8 @@ class MPSs_Home extends State<MPSs_Stateful>{
           iconDataUrl: jsWallet.icon.toDart,
         );
       }).toList();
+      _wallets = dartList;
 
-      setState(() {
-        _wallets = dartList;
-      });
     } catch (e) {
       print("Scan Error: $e");
     }

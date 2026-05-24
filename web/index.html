@@ -40,7 +40,7 @@
       window.dispatchEvent(new Event("eip6963:requestProvider"));
 
       // 各ウォレットからのイベント出揃いを待つ（100ms程度）
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Flutter（Dart）が処理しやすい単純なオブジェクト配列に変換
       const walletList = [];
