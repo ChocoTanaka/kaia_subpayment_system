@@ -130,10 +130,8 @@ class _MPSsState_Read extends State<Page1> {
                   amount: tx_R.amount,
               );
               // WebならJS Interop経由
-              await sendTransaction(tx);
-              //await requestSignatureJS(tx);
+              await requestSignatureJS(tx);
               Navigator.pop(context);
-
             },
           )
         ],
@@ -211,8 +209,8 @@ class _MPSsState_Read extends State<Page1> {
     switch(i_situ){
       case 0:
         return SizedBox(
-            height:500,
-            width:500,
+            height:300,
+            width:300,
             child: Center(
                 child:ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -302,8 +300,8 @@ class _MPSsState_Read extends State<Page1> {
         );
       case 2:
         return SizedBox(
-            height:500,
-            width:500,
+            height:300,
+            width:300,
             child: Center(
               child:Text(
                 Read_Text,
@@ -315,8 +313,8 @@ class _MPSsState_Read extends State<Page1> {
         );
       default:
         return SizedBox(
-            height:500,
-            width:500,
+            height:300,
+            width:300,
             child: Center(
                 child:ElevatedButton(
                   style: ElevatedButton.styleFrom(

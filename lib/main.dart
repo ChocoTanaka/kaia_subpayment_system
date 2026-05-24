@@ -3,11 +3,15 @@ import 'package:kaia_subpayment_system/Connect.dart';
 import 'Page1.dart';
 import 'Page2.dart';
 import 'Web3.dart';
-import 'dart:js_interop' as js;
+import 'dart:js_interop';
+import 'Connect.dart';
 
 // JSの関数を定義
-@js.JS('connectWallet')
-external js.JSPromise<js.JSString?> _connectWallet();
+@JS('connectWallet')
+external JSPromise<JSString?> _connectWallet();
+
+@JS('connectTargetWallet')
+external JSPromise<JSString> jsConnectTargetWallet(JSString rdns);
 
 void main() {
   runApp(const MPSs());
@@ -42,12 +46,111 @@ class MPSs_Stateful extends StatefulWidget {
 class MPSs_Home extends State<MPSs_Stateful>{
   int _selectedIndex = 0;
 
+  List<WalletModel> _wallets = [];
+
+  final ScrollController _scrollController = ScrollController();
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  // ウォレットのリアルタイムスキャンを実行
+  Future _scanAvailableWallets() async {
+    try {
+      final JSArray<JSWalletInfo> jsList = await jsGetAvailableWallets().toDart;
+      final List<WalletModel> dartList = jsList.toDart.map((jsWallet) {
+        return WalletModel(
+          name: jsWallet.name.toDart,
+          rdns: jsWallet.rdns.toDart,
+          iconDataUrl: jsWallet.icon.toDart,
+        );
+      }).toList();
+
+      setState(() {
+        _wallets = dartList;
+      });
+    } catch (e) {
+      print("Scan Error: $e");
+    }
+  }
+
+  // 選ばれたウォレットに接続
+  Future _selectAndConnect(String rdns) async {
+    try {
+      final JSString jsAddress = await jsConnectSelectedWallet(rdns.toJS).toDart;
+
+      print("Address: ${jsAddress.toDart}");
+      // ここからステーブルコイン決済の画面へ遷移させる
+    } catch (e) {
+      print("接続失敗: $e");
+    }
+  }
+
+  Future<void> CheckWallets(BuildContext context) async {
+    await showDialog(context: context, builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text(
+          'Wallet Check',
+          style: TextStyle(
+            fontSize: 22,
+          ),
+        ),
+          content: SizedBox(
+              width: 300,
+              height: 250,
+              child: Column(
+                children : [
+                  Expanded(
+                    child:  _wallets.length > 1 ?
+                      Scrollbar(
+                      controller: _scrollController,
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        child: Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true, // 追加
+                            physics: NeverScrollableScrollPhysics(), // 追加
+                            itemCount: _wallets.length,
+                            itemBuilder: (context, index) {
+                              final wallet = _wallets[index];
+                              return ListTile(
+                                // EIP-6963仕様：wallet.iconDataUrlにはウォレットのロゴ画像（base64）が入っているので、Image.network等でそのままアイコン表示も可能
+                                  title: Text(wallet.name),
+                                  subtitle: Text(wallet.rdns), // 例: 'me.unifi'
+                                  trailing: Icon(Icons.chevron_right),
+                                  onTap: () {
+                                    _selectAndConnect(wallet.rdns);
+                                    Navigator.pop(context);
+                                  }
+                              );
+                            },
+                          )
+                        ),
+                      ),
+                    ): SizedBox(),
+                  ),
+                ]
+              ),
+          ),
+          actions: <Widget>[
+            GestureDetector(
+              child: const Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ]
+      );
+    });
+
+  }
   @override
   initState() {
     super.initState();
@@ -66,7 +169,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
   Future<void> connectWeb3() async {
     try {
       // JSの関数を呼び出し（PromiseをawaitするためにtoDartを使用）
-      final js.JSString? result = await _connectWallet().toDart;
+      final JSString? result = await _connectWallet().toDart;
 
       if (result != null) {
         final String address = result.toDart;
@@ -114,8 +217,8 @@ class MPSs_Home extends State<MPSs_Stateful>{
               return FloatingActionButton(
                 isExtended: true,
                 onPressed: () async{
-                  userAddress = await connectWallet_KAIA(); // これだけで MetaMask が起動し、userAddress に値が入る
-                  addressNotifier.value = userAddress;
+                  await _scanAvailableWallets;
+                  await CheckWallets(context);
                   //await connectWeb3();
                   print('Connected Address: ${userAddress}');
                 },

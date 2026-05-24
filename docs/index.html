@@ -24,6 +24,46 @@
 <body>
   <script src="flutter_bootstrap.js" async></script>
   <script>
+    const discoveredProviders = new Map();
+
+      // 1. イベントリスナーを常時起動
+    window.addEventListener("eip6963:announceProvider", (event) => {
+      const { info, provider } = event.detail;
+      // 重複を防ぎつつマップに格納
+      discoveredProviders.set(info.rdns, { info, provider });
+    });
+
+      // 2. ウォレットをスキャンして、検出されたリストをFlutterに返す関数
+    async function getAvailableWallets() {
+      // 既存のリストをクリアして再要求
+      discoveredProviders.clear();
+      window.dispatchEvent(new Event("eip6963:requestProvider"));
+
+      // 各ウォレットからのイベント出揃いを待つ（100ms程度）
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Flutter（Dart）が処理しやすい単純なオブジェクト配列に変換
+      const walletList = [];
+      discoveredProviders.forEach((value, rdns) => {
+        walletList.push({
+          name: value.info.name,
+          rdns: rdns,
+          icon: value.info.icon // Base64の画像データURL等が入っています
+        });
+      });
+      return walletList;
+    }
+
+    // 3. ユーザーが選んだRDNSを指定して直接接続を実行する関数
+    async function connectSelectedWallet(rdns) {
+      const target = discoveredProviders.get(rdns);
+      if (!target) throw new Error("指定されたウォレットが見つかりません");
+
+      // 対象のプロバイダだけで要求を通す（Base等の競合を完全スルー）
+      const accounts = await target.provider.request({ method: 'kaia_requestAccounts' });
+      return accounts[0];
+    }
+
     async function connectWallet() {
       if (window.klaytn) {
         // すでに接続済みかチェック（これを入れると安定します）
