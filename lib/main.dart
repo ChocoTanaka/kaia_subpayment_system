@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kaia_subpayment_system/Connect.dart';
+import 'Connect.dart';
 import 'Page1.dart';
 import 'Page2.dart';
 import 'Web3.dart';
 import 'dart:js_interop';
-import 'Connect.dart';
 
 // JSの関数を定義
 @JS('connectWallet')
@@ -67,7 +66,10 @@ class MPSs_Home extends State<MPSs_Stateful>{
           iconDataUrl: jsWallet.icon.toDart,
         );
       }).toList();
-      _wallets = dartList;
+      setState(() {
+        _wallets = dartList;
+      });
+      print(_wallets.length);
 
     } catch (e) {
       print("Scan Error: $e");
@@ -118,8 +120,9 @@ class MPSs_Home extends State<MPSs_Stateful>{
                                   title: Text(wallet.name),
                                   subtitle: Text(wallet.rdns), // 例: 'me.unifi'
                                   trailing: Icon(Icons.chevron_right),
-                                  onTap: () {
-                                    _selectAndConnect(wallet.rdns);
+                                  onTap: () async{
+                                    await _selectAndConnect(wallet.rdns);
+                                    addressNotifier.value = userAddress;
                                     Navigator.pop(context);
                                   }
                               );
@@ -215,7 +218,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
               return FloatingActionButton(
                 isExtended: true,
                 onPressed: () async{
-                  await _scanAvailableWallets;
+                  _scanAvailableWallets;
                   await CheckWallets(context);
                   //await connectWeb3();
                   print('Connected Address: ${userAddress}');
