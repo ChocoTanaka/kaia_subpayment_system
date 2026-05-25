@@ -35,22 +35,26 @@
 
       // 2. ウォレットをスキャンして、検出されたリストをFlutterに返す関数
     async function getAvailableWallets() {
-      // 既存のリストをクリアして再要求
       discoveredProviders.clear();
       window.dispatchEvent(new Event("eip6963:requestProvider"));
 
-      // 各ウォレットからのイベント出揃いを待つ（100ms程度）
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // 1000ms（1秒）確実に待つためのPromiseを生成してawaitする
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(); // 1秒経ったらPromiseを「完了」状態にする
+        }, 1000);
+      });
 
-      // Flutter（Dart）が処理しやすい単純なオブジェクト配列に変換
+      // ここからは1秒後に必ず実行される
       const walletList = [];
       discoveredProviders.forEach((value, rdns) => {
         walletList.push({
           name: value.info.name,
           rdns: rdns,
-          icon: value.info.icon // Base64の画像データURL等が入っています
+          icon: value.info.icon
         });
       });
+      // async関数のため、自動的にPromiseにラップされてFlutterへ返る
       return walletList;
     }
 

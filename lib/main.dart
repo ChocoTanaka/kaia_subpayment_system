@@ -56,9 +56,17 @@ class MPSs_Home extends State<MPSs_Stateful>{
   }
 
   // ウォレットのリアルタイムスキャンを実行
-  Future _scanAvailableWallets() async {
+  void _scanAvailableWallets() async {
+
     try {
-      final JSArray<JSWalletInfo> jsList = await jsGetAvailableWallets().toDart;
+      // 1. まずJSの関数を叩いて「JSPromise」を受け取る
+      final JSPromise<JSArray<JSWalletInfo>> jsPromise = jsGetAvailableWallets();
+
+      // 2. .toDart を使って「Future<JSArray<JSWalletInfo>>」に変換し、それを await で待つ！
+      // これにより、JS側の setTimeout(..., 1000) が終わるまでDart側もここで停止します
+      final JSArray<JSWalletInfo> jsList = await jsPromise.toDart;
+
+      // 3. ここに到達した時点では、確実にJS側の1秒待機が終わり、リストにデータが入っています
       final List<WalletModel> dartList = jsList.toDart.map((jsWallet) {
         return WalletModel(
           name: jsWallet.name.toDart,
@@ -66,13 +74,17 @@ class MPSs_Home extends State<MPSs_Stateful>{
           iconDataUrl: jsWallet.icon.toDart,
         );
       }).toList();
+
       setState(() {
         _wallets = dartList;
       });
+
       print(_wallets.length);
 
+      print("🔍 スキャン完了。検出数: ${_wallets.length}");
     } catch (e) {
-      print("Scan Error: $e");
+      print("スキャンエラー: $e");
+
     }
   }
 
