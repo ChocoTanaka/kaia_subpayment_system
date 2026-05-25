@@ -230,7 +230,8 @@ class MPSs_Home extends State<MPSs_Stateful>{
               return FloatingActionButton(
                 isExtended: true,
                 onPressed: () async{
-                  _scanAvailableWallets;
+                  scanWalletsDirectly();
+                  //_scanAvailableWallets;
                   await CheckWallets(context);
                   //await connectWeb3();
                   print('Connected Address: ${userAddress}');
